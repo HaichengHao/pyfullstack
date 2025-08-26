@@ -51,5 +51,12 @@
         </library>
       </libraries>
     </data-source>
+    <data-source source="LOCAL" name="blogsys" uuid="2989db73-8e7c-46d0-bad2-9c24076f6f43">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://localhost:3306/myblogdb</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

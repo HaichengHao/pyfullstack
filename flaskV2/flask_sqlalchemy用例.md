@@ -12,7 +12,7 @@
 class Config:
     # 1. 数据库连接 URI（必须）
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://user:password@localhost:3306/dbname'
-    
+  
     # 2. 禁用追踪修改（强烈建议关闭，节省性能）
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -37,23 +37,25 @@ class Config:
 
 ### 🔍 重点说明：
 
-| 配置项 | 说明 |
-|-------|------|
-| `SQLALCHEMY_DATABASE_URI` | **必须**，格式：`dialect+driver://user:password@host:port/dbname` |
-| `SQLALCHEMY_TRACK_MODIFICATIONS` | ❌ 务必设为 `False`，否则消耗大量内存 |
-| `SQLALCHEMY_ECHO` | ✅ 开发时设为 `True`，可看到生成的 SQL |
-| `SQLALCHEMY_POOL_PRE_PING` | ✅ 推荐开启，防止 MySQL `gone away` 错误 |
+
+| 配置项                           | 说明                                                              |
+| ---------------------------------- | ------------------------------------------------------------------- |
+| `SQLALCHEMY_DATABASE_URI`        | **必须**，格式：`dialect+driver://user:password@host:port/dbname` |
+| `SQLALCHEMY_TRACK_MODIFICATIONS` | ❌ 务必设为`False`，否则消耗大量内存                              |
+| `SQLALCHEMY_ECHO`                | ✅ 开发时设为`True`，可看到生成的 SQL                             |
+| `SQLALCHEMY_POOL_PRE_PING`       | ✅ 推荐开启，防止 MySQL`gone away` 错误                           |
 
 ---
 
 ### 🌐 支持的数据库（Dialect）
 
-| 数据库 | URI 示例 |
-|--------|---------|
-| MySQL | `mysql+pymysql://root:123456@localhost:3306/mydb` |
-| PostgreSQL | `postgresql+psycopg2://user:pass@localhost/mydb` |
-| SQLite | `sqlite:///mydb.db` |
-| Oracle | `oracle+cx_oracle://user:pass@localhost:1521/orcl` |
+
+| 数据库     | URI 示例                                           |
+| ------------ | ---------------------------------------------------- |
+| MySQL      | `mysql+pymysql://root:123456@localhost:3306/mydb`  |
+| PostgreSQL | `postgresql+psycopg2://user:pass@localhost/mydb`   |
+| SQLite     | `sqlite:///mydb.db`                                |
+| Oracle     | `oracle+cx_oracle://user:pass@localhost:1521/orcl` |
 
 > 推荐 MySQL 使用 `PyMySQL` 或 `mysqlclient` 驱动。
 
@@ -105,6 +107,7 @@ flask db upgrade
 ```
 
 或者手动（不推荐）：
+
 ```python
 with app.app_context():
     db.create_all()
@@ -134,27 +137,46 @@ db.session.commit()
 #### 🔍 查询数据（Read）
 
 ```python
+
+#记住,.all()获取的都是列表
 # 查询所有用户
-users = User.query.all()
+users = User.query.all() #返回的是一个列表
 
 # 查询第一个用户
-user = User.query.first()
+user = User.query.first() 
 
 # 按主键查询
-user = User.query.get(1)
+user = User.query.get(1) #返回的是一个用户对象
 
 # 条件查询
 user = User.query.filter_by(username='alice').first()
 user = User.query.filter(User.age > 18).all()
+user = User.query.filter(User.age.__ge__(18)).all()
+#还有.__ge__,__gt__,__lt__,__le__
+#对于离散值,在sql原语中使用的是select * from tablename where case in [数值1,数值2,...]
+#所以用sqlalchemy得是如下的用法
+User.query.filter(User.phone.in_([]))
+#对于范围值
+User.query.filter(User.age.between_(15,30)) #查询年龄在15到30之间的用户
 
 # 模糊查询
 users = User.query.filter(User.username.like('%ali%')).all()
+users = User.query.filter(User.username.contains('%z%')).all() #寻找所有用户名包含z的
 
 # 排序
-users = User.query.order_by(User.created_at.desc()).limit(10).all()
+users = User.query.order_by(User.created_at.desc()).offset(5).limit(10).all()
+User.query.filter(or_(User.username.like('%z%'),User.username.contains('i'))).order_by(User.username.desc()).all()
 
 # join 查询
 users = User.query.join(Role).filter(Role.name == 'admin').all()
+
+#多条件检索
+#需要导入包 
+from flask_sqlalchemy import and_,or_,not_ #对应的就是与或非
+User.query.filter(or_(User.username.like('%z%'),User.username.contains('i'))).all()
+User.query.filter(and_(User.username.like('%z%'),User.username.contains('i'))).all()
+User.query.filter(not_(User.username.like('%z%'),User.username.contains('i'))).all()
+#相当于select * from user where username like '%z%' or username like '%i%'
 ```
 
 ---
@@ -168,6 +190,7 @@ db.session.commit()
 ```
 
 或者批量更新：
+
 ```python
 db.session.query(User).filter(User.is_active == False).update({'age': 0})
 db.session.commit()
@@ -188,6 +211,7 @@ db.session.commit()
 ### 3. 高级查询技巧
 
 #### 分页
+
 ```python
 page = request.args.get('page', 1, type=int)
 pagination = User.query.paginate(page=page, per_page=10, error_out=False)
@@ -195,6 +219,7 @@ users = pagination.items
 ```
 
 #### 原生 SQL（复杂查询）
+
 ```python
 from sqlalchemy import text
 
@@ -207,6 +232,7 @@ for row in result:
 ```
 
 #### 事务控制
+
 ```python
 try:
     user1 = User(username='a', email='a@b.com')
@@ -257,7 +283,6 @@ flask db downgrade -r 版本号
 
 请确保在执行此操作之前备份好数据，因为降级操作可能会导致数据丢失。如果你不确定应该使用哪个版本号，可以先使用 `flask db history` 查看项目中的迁移历史。
 
-
 > ✅ `Flask-Migrate` 会自动检测 `db.Model` 的变化，生成 `alembic` 脚本。
 
 ---
@@ -289,26 +314,28 @@ flask db downgrade -r 版本号
 
 继续加油，你已经走在正确的路上了！🚀
 
-### 补充:常见的数据类型  
-| 名称 | 解释 |
-|--------|---------|  
-|Integer | 整型 | 
-|String(Size)| 字符串类型,务必制定大小| 
-|Text | 长文本类型 | 
-|Dataime| 日期时间| 
-| Float | 浮点类型 | 
-|Boolean | 布尔类型  | 
-| PickleType | 存储pickle类型,主要和序列化有关| 
-| LargeBinary| 存储大的二进制类型 |  
+### 补充:常见的数据类型
 
-| 可选功能 | 解释 | 
-|--------|--------|  
-|primary_key=True| 主键| 
-|autoincrement | 自增 | 
-|nullable=False | 非空约束 | 
-| unique = True | 唯一约束 | 
-|default=datatime.now| 默认值,可以自由设置 | 
 
+| 名称         | 解释                            |
+| -------------- | --------------------------------- |
+| Integer      | 整型                            |
+| String(Size) | 字符串类型,务必制定大小         |
+| Text         | 长文本类型                      |
+| Dataime      | 日期时间                        |
+| Float        | 浮点类型                        |
+| Boolean      | 布尔类型                        |
+| PickleType   | 存储pickle类型,主要和序列化有关 |
+| LargeBinary  | 存储大的二进制类型              |
+
+
+| 可选功能             | 解释                |
+| ---------------------- | --------------------- |
+| primary_key=True     | 主键                |
+| autoincrement        | 自增                |
+| nullable=False       | 非空约束            |
+| unique = True        | 唯一约束            |
+| default=datatime.now | 默认值,可以自由设置 |
 
 你问得非常好！你想在查询时同时用 **用户名、密码、手机号** 三个字段做筛选，相当于原生 SQL 的 `AND` 条件：
 
@@ -364,11 +391,12 @@ user = User.query.filter(User.username == username) \
 
 ### 🔁 对比总结
 
-| 写法 | 优点 | 适用场景 |
-|------|------|---------|
-| `filter_by(username=u, password=p, phone=p)` | 简洁、易读 | 字段名是合法 Python 变量名，且是精确匹配 |
-| `filter(User.username==u, User.password==p, ...)` | 更接近原生 SQL | 需要复杂表达式或非等值查询 |
-| `filter(...).filter(...)` 链式调用 | 可动态拼接条件 | 条件不确定，比如某些字段可选 |
+
+| 写法                                              | 优点           | 适用场景                                 |
+| --------------------------------------------------- | ---------------- | ------------------------------------------ |
+| `filter_by(username=u, password=p, phone=p)`      | 简洁、易读     | 字段名是合法 Python 变量名，且是精确匹配 |
+| `filter(User.username==u, User.password==p, ...)` | 更接近原生 SQL | 需要复杂表达式或非等值查询               |
+| `filter(...).filter(...)` 链式调用                | 可动态拼接条件 | 条件不确定，比如某些字段可选             |
 
 ---
 

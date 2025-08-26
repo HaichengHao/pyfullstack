@@ -10,7 +10,7 @@ from .config import configdict
 from .user.view import user_bps
 
 
-def create_app(configname=None):
+def create_app(configname='default'):
     app = Flask(__name__, template_folder='../templates')
 
     configname = configname or os.getenv('FLASK_ENV' or 'default')

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户查询页面</title>
+</head>
+<body>
+<div>{{ user }}</div>
+<div>{{ user1 }}</div>
+<div>{{ user2 }}</div>
+<div>{{ user3 }}</div>
+<div>{{ user4 }}</div>
+<div>{{ user5 }}</div>
+<div>{{ user5|length }}</div>
+<div>{{ user.regi_date }}</div>
+<div>{{ user_lst }}</div>
+<div>{{ user_lst2 }}</div>
+<div>{{ phoneuser }}</div>
+{% if user %}
+<form action="{{ url_for('user.select') }}" method="post">
+        <p><input type="text" name="username" value="{{ user.username }}"></p>
+        <p><input type="text"  name="newusername" placeholder="输入新的用户名"></p>
+        <p><input type="text"  id='000' name="password" placeholder="新密码"></p>
+        <p><input type="text" id ='001'name="repassword" placeholder="再次输入新密码"></p>
+        <p><input type="text" name="phone" placeholder={{ user.phone }}></p>
+        <p><input type="submit"></p>
+    </form>
+    {% else %}
+    <p>{{ errorinfo }}</p>
+{% endif %}
+</body>
+</html>

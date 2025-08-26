@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
 
 '''
-如果是淡出的写了item:Item
+如果是单纯地写了item:Item
 那么请求体是这样的
 {
     "name": "qqg",

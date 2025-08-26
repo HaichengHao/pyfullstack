@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/11web逆向/09b站播放/整合" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/flask/02web平台下/00优化/myweb_new" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/flask/00web服务/10文件上传" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/flaskV2/16blogsysnew" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.11 (converse_pyspider)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -13,5 +14,8 @@
   <component name="PyDocumentationSettings">
     <option name="format" value="PLAIN" />
     <option name="myDocStringFormat" value="Plain" />
+  </component>
+  <component name="TemplatesService">
+    <option name="TEMPLATE_CONFIGURATION" value="Jinja2" />
   </component>
 </module>

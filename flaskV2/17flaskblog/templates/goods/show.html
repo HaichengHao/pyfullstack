@@ -43,7 +43,7 @@
             <td>{{ g.gname }}</td>
             <td>{{ g.gprice }}</td>
             <td>
-                <button class="buyit">购买</button>
+                <button class="buyit" tag="{{ g.id }}">购买</button>
             </td>
             </tr>
         {% endfor %}
@@ -52,4 +52,11 @@
     </p>
 </form>
 </body>
+<script>
+    $('.buyit').click(function (){
+        goods_id = $(this).attr('tag').val()
+        user_id = $('select[name="uid"]').val()
+        location.href = '/buy?uid='+user_id+'&gid='+goods_id
+    })
+</script>
 </html>

@@ -5,7 +5,7 @@
 """
 from DrissionPage import WebPage,ChromiumPage,SessionPage
 page = WebPage()
-page.get('https://sy.lianjia.com/?utm_source=biying&utm_medium=pinzhuan&utm_term=biaoti&utm_content=biaotimiaoshu&utm_campaign=wybeijing')
+page.get('https://tj.lianjia.com/?utm_source=biying&utm_medium=pinzhuan&utm_term=biaoti&utm_content=biaotimiaoshu&utm_campaign=wybeijing')
 loginbtn = page.ele('.reg')
 loginbtn.click()
 

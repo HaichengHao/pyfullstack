@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>所有文章</title>
+    <style>
+        div.art{
+            background-color: #2aabd2;
+            color: white;
+            border: 1px solid black;
+            margin-bottom: 5px;
+
+        }
+    </style>
+</head>
+<body>
+{% for article in user.articles %}
+    <div class="art">
+        <h3>{{ article.title }}</h3>
+        <p>{{ article.user.username }}&nbsp;&nbsp;{{ article.pdatetime }}</p>
+        <div>
+            {{ article.content }}
+        </div>
+    </div>
+{% endfor %}
+</body>
+</html>

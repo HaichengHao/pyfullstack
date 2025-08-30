@@ -7,7 +7,7 @@ from sqlalchemy import and_, or_
 
 from .models import User
 from exts.extensions import db
-from flask import Blueprint, request, render_template, redirect, url_for
+from flask import Blueprint, request, render_template, redirect, url_for,session
 from .models import User
 
 user_bps = Blueprint(name='user', import_name=__name__)
@@ -125,6 +125,7 @@ def login():
 
     user = User.query.filter_by(username=username, password=password_enc, phone=phone).first()
     if user:
+        session['uname']=username
         return redirect('/')
     else:
         return render_template('user/login.html', errorinfo='信息错误,请重试')

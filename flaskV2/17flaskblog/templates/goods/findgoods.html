@@ -9,7 +9,7 @@
     <br>
     用户购买的商品有:
     {% for g in user.goods_lst %}
-        {{ g.gname }}
+        {{ g.gname }}:价格:{{ g.price }}
     {% endfor %}
 </body>
 </html>

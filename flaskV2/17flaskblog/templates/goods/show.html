@@ -14,6 +14,7 @@
             border: 0.2px gray;
         }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <form action="">
@@ -39,12 +40,12 @@
         <tbody>
         {% for g in goods %}
             <tr>
-            <td>{{ loop.index }}</td>
-            <td>{{ g.gname }}</td>
-            <td>{{ g.gprice }}</td>
-            <td>
-                <button class="buyit" tag="{{ g.id }}">购买</button>
-            </td>
+                <td>{{ loop.index }}</td>
+                <td><a href="{{ url_for('goods.finduser') }}?gid={{ g.id }}">{{ g.gname }}</a></td>
+                <td>{{ g.price }}</td>
+                <td>
+                    <input type="button" class="buy" tag="{{ g.id }}" value="购买">
+                </td>
             </tr>
         {% endfor %}
         </tbody>
@@ -53,10 +54,15 @@
 </form>
 </body>
 <script>
-    $('.buyit').click(function (){
-        goods_id = $(this).attr('tag').val()
-        user_id = $('select[name="uid"]').val()
-        location.href = '/buy?uid='+user_id+'&gid='+goods_id
+    $('.buy').click(function () {
+        goods_id = $(this).attr('tag');
+        var user_id = $('select[name="uid"]').val();
+        if (user_id == '0') {
+            alert('请先选择一个用户！');
+            return; // 阻止跳转
+        }
+        console.log(goods_id, user_id);
+        location.href = 'buy?uid=' + user_id + '&gid=' + goods_id
     })
 </script>
 </html>

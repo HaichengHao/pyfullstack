@@ -7,7 +7,7 @@ from sqlalchemy import and_, or_
 
 from .models import User
 from exts.extensions import db
-from flask import Blueprint, request, render_template, redirect, url_for,session
+from flask import Blueprint, request, render_template, redirect, url_for,session,jsonify
 from .models import User
 
 user_bps = Blueprint(name='user', import_name=__name__)
@@ -99,7 +99,7 @@ def register():
             # step2:给对象的属性进行赋值
             user.username = username
 
-            # important:调用加密算法对密码进行加密
+            # important:调用加密算法对密码进行加密 新方法:generate_password_hash(password.encode('utf-8')),但是注意长度需要是64,那么model就要对应修改
             user.password = hashlib.sha256(password.encode('utf-8')).hexdigest()
             user.phone = phone
             # step3:往数据库里添加
@@ -130,6 +130,53 @@ def login():
     else:
         return render_template('user/login.html', errorinfo='信息错误,请重试')
 
+
+#手机号码验证
+# @user_bps.route('/checkphone',endpoint='checkphone')
+# def check_phone():
+#     phonenum = request.args.get('phone')
+#     res = User.query.filter_by(phone=phonenum).all()
+#     if len(res)>0:
+#         return jsonify(
+#            code=400,msg='不可用'
+#         )
+#     else:
+#         return jsonify(
+#             code=200,
+#             msg='可用'
+#         )
+
+
+@user_bps.route('/checkphone',endpoint='checkphone')
+def check_phone():
+    phonenum = request.args.get('phone', '').strip()
+    if not phonenum:
+        return jsonify(code=400, msg='手机号不能为空')
+    if not phonenum.isdigit() or len(phonenum) != 11:
+        return jsonify(code=400, msg='手机格式错误')
+
+    user = User.query.filter_by(phone=phonenum, isdelete=0).first()
+    if user:
+        return jsonify(code=400, msg='该手机号已被注册')
+    else:
+        return jsonify(code=200, msg='可用')
+#用户登入新写法之使用wtform
+# from forms import LoginForm
+# @user_bps.route('/login',methods=['GET','post'])
+# def login():
+#     form = LoginForm()
+#     if form.validate_on_submit():
+#         username = form.username.data
+#         password_raw = form.password_raw.data
+#         password_enc = hashlib.sha256(password_raw.encode('utf-8')).hexdigest()
+#         phone = form.phone.data
+#         user = User.query.filter_by(username=username, password=password_enc, phone=phone).first()
+#         if user:
+#             session['uname']=username
+#             return redirect('/')
+#         else:
+#             return render_template('user/login.html', errorinfo='信息错误,请重试')
+#     return render_template('user/login.html', form=form)
 
 # start_cb:实现搜索功能
 
@@ -173,5 +220,10 @@ def select_route():
     '''
     模型类.query.filter()里面的是布尔的条件   模型类.query.filter(模型类.字段名=='值')
     模型类.query.filter_by()里面的是等值  模型类.query.filter_by(字段名=='值'[可以写多个])
-    
     '''
+
+
+#新测试路由,用于查看基础模板是否被调用
+@user_bps.route('/test2',endpoint='test2')
+def test2_route():
+    return render_template('base.html')

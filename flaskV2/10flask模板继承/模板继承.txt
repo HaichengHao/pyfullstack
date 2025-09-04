@@ -38,6 +38,9 @@ JINJA标签
 {% import 'macro/macro.html' as f %}
 {{f.函数名(参数) }}
 
+或者这样写
+{% from 'macro/macro.html' import 函数名%}
+{{ 函数名(参数) }}
 
 设置全局变量和局部变量
 {% set 全局变量名 = 值 %}

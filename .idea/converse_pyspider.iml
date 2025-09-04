@@ -8,7 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/flask/00web服务/10文件上传" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/flaskV2/17flaskblog" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.11 (converse_pyspider)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.11 (converse_pyspider) (3)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">

@@ -1,33 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>登录</title>
-    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-</head>
-<body>
+{% extends 'base.html' %}
+{% block title %}
+    用户登录
+{% endblock %}
+{% block page_content %}
+    <div>
     <h1>用户登录</h1>
+    <form aaction="{{ url_for('user.login') }}" method="post">
+        <div class="mb-3">
+            <label for="exampleInputUsesrname" class="form-label">用户名</label>
+            <input type="text" class="form-control" id="exampleInputUsername" name="username">
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">密码</label>
+            <input type="password" class="form-control" id="password" name="password">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputphone " class="form-label">输入手机号</label>
+            <input type="text" class="form-control" id="exampleInputphone" name="phone">
+        </div>
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+            <label class="form-check-label" for="exampleCheck1">记住我</label>
+        </div>
 
-    <form action="{{ url_for('user.login') }}" method="post">
-        <p><input type="text" name="username" placeholder="用户名"></p>
-        <p><input type="password" id="password" name="password" placeholder="密码"></p>
-        <p><input type="text" name="phone" placeholder="输入手机号"></p>
-        <p><input type="submit" value="登录"></p>
+        <button type="submit" class="btn btn-primary">登录</button>
+        <button type="button" class="btn btn-secondary" onclick="togglePassword()" id="togtext">显示密码</button>
+        <button type="button" class="btn btn-secondary"><a href="/register" class="nav-link">注册</a></button>
     </form>
+    <div style="color: red" id="002">{{ errorinfo }}</div>
+    </div>
+{% endblock %}
 
-    <button type="button" id="shbtn">显示密码</button>
-    <div style="color: red">{{ errorinfo }}</div>
-</body>
-<script>
-    $('#shbtn').click(function () {
-        const $passwordInput = $('#password');
-        const isPassword = $passwordInput.attr('type') === 'password';
+{% block myjs %}
+    <script>
+        function togglePassword() {
 
-        // 切换 input 的 type
-        $passwordInput.attr('type', isPassword ? 'text' : 'password');
 
-        // 切换按钮文字
-        $(this).text(isPassword ? '隐藏密码' : '显示密码');
-    });
-</script>
-</html>
+            var passwordField = document.getElementById("password");
+            var demo1 = document.getElementById("togtext");
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                demo1.innerText = "隐藏密码"
+            } else {
+                passwordField.type = "password";
+            }
+        }
+
+    </script>
+{% endblock %}

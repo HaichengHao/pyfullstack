@@ -1,29 +1,96 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>注册</title>
-</head>
-<body>
-    <h1>用户注册</h1>
-    <a href="{{ url_for('user.login') }}">已注册点我登录</a>
-    <form action="{{ url_for('user.register') }}" method="post">
-        <p><input type="text"  name="username" placeholder="用户名"></p>
-        <p><input type="text"  id='000' name="password" placeholder="密码"></p>
-        <p><input type="text" id ='001'name="repassword" placeholder="再次输入密码"></p>
-        <p><input type="text" name="phone" placeholder="输入手机号"></p>
-        <p><input type="submit"></p>
-    </form>
-<div style="color: red" id="002">{{ errorinfo }}</div>
-</body>
-{#<script>#}
-{#    let pwd  = document.getElementById('000')#}
-{#    let prepwd = document.getElementById('001')#}
-{#    let msg = document.getElementById('002')#}
-{#    if(pwd){#}
-{#        if(pwd === prepwd){msg.innerText = '密码一致'}#}
-{#    }else {#}
-{#        msg.innerText=''#}
-{#    }#}
-{#</script>#}
-</html>
+{% extends 'base.html' %}
+{% block title %}
+    用户注册
+{% endblock %}
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+{% block page_content %}
+    <div>
+        <h1>用户注册</h1>
+        <form action="{{ url_for('user.register') }}" method="post">
+            <div class="mb-3">
+                <label for="exampleInputUsesrname" class="form-label">用户名</label>
+                <input type="text" class="form-control" id="exampleInputUsername" name="username">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">密码</label>
+                <input type="password" class="form-control" id="password" name="password">
+            </div>
+            <div class="mb-3">
+                <label for="repassword" class="form-label">再次输入密码</label>
+                <input type="password" class="form-control" id="repassword" name="repassword">
+            </div>
+            <div class="mb-3">
+                <label for="phone " class="form-label">输入手机号</label>
+                <input type="text" class="form-control" id="phone" name="phone">
+                <span id="ermsg" class="alert-danger"></span>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                <label class="form-check-label" for="exampleCheck1">记住我</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">注册</button>
+            <button type="button" onclick="togglePassword()" id="togtext" class="btn btn-secondary">显示密码</button>
+            <button type="button" class="btn btn-secondary"><a href="/login" class="nav-link">已注册点我登录</a></button>
+
+        </form>
+        <div style="color: red" id="002">{{ errorinfo }}</div>
+    </div>
+{% endblock %}
+
+{% block myjs %}
+    {{ super() }}
+    <script>
+        function togglePassword() {
+
+
+            var passwordField = document.getElementById("password");
+            var repasswordField = document.getElementById("repassword")
+            var demo1 = document.getElementById("togtext");
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                repasswordField.type = "text";
+                demo1.innerText = "隐藏密码"
+            } else {
+                passwordField.type = "password";
+                repasswordField.type = "password";
+                demo1.innerText = "显示密码"
+            }
+        }
+
+        $('#phone').blur(function () {
+            let phone = $(this).val().trim();
+            let errmsg = document.getElementById('ermsg');
+
+            if (!phone) {
+                errmsg.style.color = 'red';
+                errmsg.innerText = '手机号不能为空';
+                return;
+            }
+            if (!/^\d{11}$/.test(phone)) {
+                errmsg.style.color = 'red';
+                errmsg.innerText = '手机格式错误';
+                return;
+            }
+
+        $.getJSON('{{ url_for("user.checkphone") }}', {phone: phone})
+            .done(function (data) {
+                if (data.code === 200) {
+                    errmsg.style.color = 'green';
+                    errmsg.innerText = data.msg;
+                } else {
+                    errmsg.style.color = 'red';
+                    errmsg.innerText = data.msg;
+                }
+            })
+            .fail(function () {
+                errmsg.style.color = 'red';
+                errmsg.innerText = '网络错误，请重试';
+            });
+        });
+
+
+    </script>
+
+{% endblock %}

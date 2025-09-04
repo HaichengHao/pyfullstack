@@ -62,7 +62,6 @@
         $('#phone').blur(function () {
             let phone = $(this).val().trim();
             let errmsg = document.getElementById('ermsg');
-
             if (!phone) {
                 errmsg.style.color = 'red';
                 errmsg.innerText = '手机号不能为空';
@@ -89,8 +88,6 @@
                 errmsg.innerText = '网络错误，请重试';
             });
         });
-
-
     </script>
 
 {% endblock %}

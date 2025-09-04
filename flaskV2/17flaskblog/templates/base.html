@@ -68,14 +68,14 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li class="warning"><a class="dropdown-item" href="#">退出</a></li>
+                            <li class="warning"><a class="dropdown-item" href="/logout">退出</a></li>
                         </ul>
                     </li>
                 </ul>
 
                 <ul class="navbar-nav col-1">
-                    {% if user %}
-                    <li>{{ user.name }}</li>
+                    {% if users %}
+                    <li>您好,{{ users.username }}</li>
                     {% else %}
                     <li class="nav-item"><a class="nav-link" href="/login" title="点我登录">未登录</a></li>
                     {% endif %}

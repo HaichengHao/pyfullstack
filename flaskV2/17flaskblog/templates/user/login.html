@@ -4,30 +4,30 @@
 {% endblock %}
 {% block page_content %}
     <div>
-    <h1>用户登录</h1>
-    <form aaction="{{ url_for('user.login') }}" method="post">
-        <div class="mb-3">
-            <label for="exampleInputUsesrname" class="form-label">用户名</label>
-            <input type="text" class="form-control" id="exampleInputUsername" name="username">
-        </div>
-        <div class="mb-3">
-            <label for="password" class="form-label">密码</label>
-            <input type="password" class="form-control" id="password" name="password">
-        </div>
-        <div class="mb-3">
-            <label for="exampleInputphone " class="form-label">输入手机号</label>
-            <input type="text" class="form-control" id="exampleInputphone" name="phone">
-        </div>
-        <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="exampleCheck1">
-            <label class="form-check-label" for="exampleCheck1">记住我</label>
-        </div>
+        <h1>用户登录</h1>
+        <form aaction="{{ url_for('user.login') }}" method="post">
+            <div class="mb-3">
+                <label for="exampleInputUsesrname" class="form-label">用户名</label>
+                <input type="text" class="form-control" id="exampleInputUsername" name="username">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">密码</label>
+                <input type="password" class="form-control" id="password" name="password">
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputphone " class="form-label">输入手机号</label>
+                <input type="text" class="form-control" id="exampleInputphone" name="phone">
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                <label class="form-check-label" for="exampleCheck1">记住我</label>
+            </div>
 
-        <button type="submit" class="btn btn-primary">登录</button>
-        <button type="button" class="btn btn-secondary" onclick="togglePassword()" id="togtext">显示密码</button>
-        <button type="button" class="btn btn-secondary"><a href="/register" class="nav-link">注册</a></button>
-    </form>
-    <div style="color: red" id="002">{{ errorinfo }}</div>
+            <button type="submit" class="btn btn-primary">登录</button>
+            <button type="button" class="btn btn-secondary" onclick="togglePassword()" id="togtext">显示密码</button>
+            <button type="button" class="btn btn-secondary"><a href="/register" class="nav-link">注册</a></button>
+        </form>
+        <div style="color: red" id="002">{{ errorinfo }}</div>
     </div>
 {% endblock %}
 
@@ -46,6 +46,5 @@
                 passwordField.type = "password";
             }
         }
-
     </script>
 {% endblock %}

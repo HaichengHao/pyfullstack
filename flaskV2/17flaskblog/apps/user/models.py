@@ -11,7 +11,7 @@ class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(20), nullable=False)
-    password = db.Column(db.String(64), nullable=False)  # 要放的是要加密的密码,所以大小应当是加密之后的大小,故db.String(Size) 的Size要谨慎设置
+    password = db.Column(db.String(128), nullable=False)  # 要放的是要加密的密码,所以大小应当是加密之后的大小,故db.String(Size) 的Size要谨慎设置
     phone = db.Column(db.String(11), unique=True, nullable=False)
     email = db.Column(db.String(30))
     icon = db.Column(db.String(100))

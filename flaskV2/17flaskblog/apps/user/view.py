@@ -8,14 +8,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from .models import User
 from exts.extensions import db
-from flask import Blueprint, request, render_template, redirect, url_for,session,jsonify
+from flask import Blueprint, request, render_template, redirect, url_for, session, jsonify, make_response
 from .models import User
 
 user_bps = Blueprint(name='user', import_name=__name__)
 import hashlib
 
 
-#用户中心
+# 用户中心
 @user_bps.route('/')
 def user_center():
     users = User.query.filter_by(isdelete=0).all()
@@ -23,7 +23,7 @@ def user_center():
     return render_template('user/usercenter.html', users=users)
 
 
-#删除数据
+# 删除数据
 @user_bps.route('/deldata')
 def del_data():
     username = request.args.get('username')
@@ -47,7 +47,7 @@ def del_data():
     return redirect('/')
 
 
-#更新数据
+# 更新数据
 @user_bps.route('/modifydata', methods=['POST', 'GET'], endpoint='modifydata')
 def modidata():
     if request.method == 'GET':
@@ -85,7 +85,8 @@ def modidata():
     db.session.commit()
     return redirect(url_for('user.user_center'))
 
-#用户注册
+
+# 用户注册
 @user_bps.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -102,7 +103,7 @@ def register():
 
             # important:调用加密算法对密码进行加密 新方法:generate_password_hash(password.encode('utf-8')),但是注意长度需要是64,那么model就要对应修改
             # user.password = hashlib.sha256(password.encode('utf-8')).hexdigest()
-            user.password = generate_password_hash(password,method='pbkdf2:sha256', salt_length=16)
+            user.password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
             user.phone = phone
             # step3:往数据库里添加
             db.session.add(user)
@@ -115,28 +116,40 @@ def register():
     return render_template('user/register.html')
 
 
-#用户登入
+# 用户登入
 @user_bps.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
-        return render_template('user/login.html')
+        # tips:新增cookie预读取
+        username = request.cookies.get('remember_username', '')  # 从cookie中拿数据,拿不到就默认设置为空
+        return render_template('user/login.html', username=username)
     username = request.form.get('username')
     password_raw = request.form.get('password')
     # password_enc = hashlib.sha256(password_raw.encode('utf-8')).hexdigest()
     phone = request.form.get('phone')
 
     user = User.query.filter_by(username=username, isdelete=0, phone=phone).first()
-    if user and check_password_hash(user.password,password_raw):
-        session['uname']=username
-        return render_template('user/index.html',users=user)
+    if user and check_password_hash(user.password, password_raw):
+        session['uname'] = username
+
+        # important:新增设置cookie,因为cookie需要设置到response对象上,所以就需要构造一个response对象
+        resp = make_response(render_template('user/index.html', users=user))
+        resp.set_cookie('remember_username', username, max_age=604800)
+        # 可选：设置安全 cookie（仅 HTTPS）
+        # resp.set_cookie('remember_username', username, max_age=604800, httponly=True, secure=True)
+        return resp  # 其实这个resp就是 render_template('user/index.html',users=user)
+        # return render_template('user/index.html',users=user)
     else:
         return render_template('user/login.html', errorinfo='信息错误,请重试')
 
-@user_bps.route('/logout',endpoint='logout')
+
+@user_bps.route('/logout', endpoint='logout')
 def logout_route():
     session.clear()
     return redirect('/login')
-#手机号码验证
+
+
+# 手机号码验证
 # @user_bps.route('/checkphone',endpoint='checkphone')
 # def check_phone():
 #     phonenum = request.args.get('phone')
@@ -152,7 +165,7 @@ def logout_route():
 #         )
 
 
-@user_bps.route('/checkphone',endpoint='checkphone')
+@user_bps.route('/checkphone', endpoint='checkphone')
 def check_phone():
     phonenum = request.args.get('phone', '').strip()
     if not phonenum:
@@ -166,7 +179,8 @@ def check_phone():
     else:
         return jsonify(code=200, msg='可用')
 
-#用户登入新写法之使用wtform
+
+# 用户登入新写法之使用wtform
 # from forms import LoginForm
 # @user_bps.route('/login',methods=['GET','post'])
 # def login():
@@ -196,7 +210,7 @@ def search():
         users = User.query.filter(
             and_(
                 or_(User.username.contains(kw), User.phone.startswith(kw)),
-             User.isdelete==0
+                User.isdelete == 0
             )
         ).all()
     return render_template('user/usercenter.html', users=users)
@@ -205,7 +219,7 @@ def search():
 # end_cb:搜索功能完成
 
 
-#仅作为测试
+# 仅作为测试
 @user_bps.route('/select', methods=['GET', 'POST'], endpoint='select')
 def select_route():
     user = User.query.get(1)  # 按主键查询用户(主键值),返回的是一个用户对象
@@ -229,7 +243,7 @@ def select_route():
     '''
 
 
-#新测试路由,用于查看基础模板是否被调用
-@user_bps.route('/test2',endpoint='test2')
+# 新测试路由,用于查看基础模板是否被调用
+@user_bps.route('/test2', endpoint='test2')
 def test2_route():
     return render_template('base.html')

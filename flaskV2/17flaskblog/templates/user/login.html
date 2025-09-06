@@ -5,10 +5,10 @@
 {% block page_content %}
     <div>
         <h1>用户登录</h1>
-        <form aaction="{{ url_for('user.login') }}" method="post">
+        <form action="{{ url_for('user.login') }}" method="post">
             <div class="mb-3">
                 <label for="exampleInputUsesrname" class="form-label">用户名</label>
-                <input type="text" class="form-control" id="exampleInputUsername" name="username">
+                <input type="text" class="form-control" id="exampleInputUsername" name="username" value="{{ request.cookies.get('remember_username','') }}">
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">密码</label>
@@ -19,8 +19,8 @@
                 <input type="text" class="form-control" id="exampleInputphone" name="phone">
             </div>
             <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                <label class="form-check-label" for="exampleCheck1">记住我</label>
+                <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                <label class="form-check-label" for="remember" >记住我</label>
             </div>
 
             <button type="submit" class="btn btn-primary">登录</button>

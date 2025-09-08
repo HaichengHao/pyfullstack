@@ -30,6 +30,9 @@ class Config:
     # 8. 是否自动提交事务（一般不开启，手动控制更好）
     # SQLALCHEMY_COMMIT_ON_TEARDOWN = False  # 已废弃，不推荐使用
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:HHCzio20@127.0.0.1:3306/flaskblog'
+
+    #9.设置session需要的SECRET_KEY
+    SECRET_KEY = ';ouahsef;euahiuhiluh'
 # 配置开发配置
 class devConfig(Config):
     DEBUG = True

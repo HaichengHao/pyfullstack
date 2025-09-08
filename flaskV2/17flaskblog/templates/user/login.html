@@ -1,50 +1,160 @@
+{#{% extends 'base.html' %}#}
+{#{% block title %}#}
+{#    用户登录#}
+{#{% endblock %}#}
+{#{% block page_content %}#}
+{#    <div style="padding-bottom: 40px;padding-top:20px;padding:30px">#}
+{#        <h1 style="color: #556252">用户登录</h1>#}
+{#        <form action="{{ url_for('user.login') }}" method="post">#}
+{#            <div class="mb-3">#}
+{#                <label for="exampleInputUsesrname" class="form-label">用户名</label>#}
+{#                <input type="text" class="form-control" id="exampleInputUsername" name="username" value="{{ request.cookies.get('remember_username','') }}">#}
+{#            </div>#}
+{#            <div class="mb-3">#}
+{#                <label for="password" class="form-label">密码</label>#}
+{#                <input type="password" class="form-control" id="password" name="password">#}
+{#            </div>#}
+{#            <div class="mb-3">#}
+{#                <label for="exampleInputphone " class="form-label">输入手机号</label>#}
+{#                <input type="text" class="form-control" id="exampleInputphone" name="phone">#}
+{#            </div>#}
+{#            <div class="mb-3 form-check">#}
+{#                <input type="checkbox" class="form-check-input" id="remember" name="remember">#}
+{#                <label class="form-check-label" for="remember" >记住我</label>#}
+{#            </div>#}
+{##}
+{#            <button type="submit" class="btn btn-primary">登录</button>#}
+{#            <button type="button" class="btn btn-secondary" onclick="togglePassword()" id="togtext">显示密码</button>#}
+{#            <button type="button" class="btn btn-secondary"><a href="/register" class="nav-link">注册</a></button>#}
+{#            <button type="button" class="btn btn-secondary"><a href="/login_verifycode" class="nav-link">手机验证码登录</a></button>#}
+{#        </form>#}
+{#        <div style="color: red" id="002">{{ errorinfo }}</div>#}
+{#    </div>#}
+{#{% endblock %}#}
+{##}
+{#{% block myjs %}#}
+{#    <script>#}
+{#        function togglePassword() {#}
+{##}
+{##}
+{#            var passwordField = document.getElementById("password");#}
+{#            var demo1 = document.getElementById("togtext");#}
+{##}
+{#            if (passwordField.type === "password") {#}
+{#                passwordField.type = "text";#}
+{#                demo1.innerText = "隐藏密码"#}
+{#            } else {#}
+{#                passwordField.type = "password";#}
+{#            }#}
+{#        }#}
+{#    </script>#}
+{#{% endblock %}#}
+
 {% extends 'base.html' %}
 {% block title %}
     用户登录
 {% endblock %}
+
 {% block page_content %}
-    <div>
-        <h1>用户登录</h1>
-        <form action="{{ url_for('user.login') }}" method="post">
+<div style="padding: 30px; padding-top: 20px; padding-bottom: 40px;">
+    <h1 style="color: #556252">用户登录</h1>
+
+    <form action="{{ url_for('user.login') }}" method="post" id="loginForm">
+        <!-- 默认显示：用户名密码登录 -->
+        <div id="passwordLogin">
             <div class="mb-3">
-                <label for="exampleInputUsesrname" class="form-label">用户名</label>
-                <input type="text" class="form-control" id="exampleInputUsername" name="username" value="{{ request.cookies.get('remember_username','') }}">
+                <label for="exampleInputUsername" class="form-label">用户名</label>
+                <input type="text" class="form-control" id="exampleInputUsername" name="username"
+                       value="{{ request.cookies.get('remember_username', '') }}">
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">密码</label>
                 <input type="password" class="form-control" id="password" name="password">
             </div>
-            <div class="mb-3">
-                <label for="exampleInputphone " class="form-label">输入手机号</label>
-                <input type="text" class="form-control" id="exampleInputphone" name="phone">
-            </div>
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                <label class="form-check-label" for="remember" >记住我</label>
-            </div>
+{#            <div class="mb-3">#}
+{#                <label for="exampleInputphone" class="form-label">手机号（可选）</label>#}
+{#                <input type="text" class="form-control" id="exampleInputphone" name="phone" placeholder="用于验证码登录">#}
+{#            </div>#}
+        </div>
 
-            <button type="submit" class="btn btn-primary">登录</button>
-            <button type="button" class="btn btn-secondary" onclick="togglePassword()" id="togtext">显示密码</button>
-            <button type="button" class="btn btn-secondary"><a href="/register" class="nav-link">注册</a></button>
-        </form>
-        <div style="color: red" id="002">{{ errorinfo }}</div>
-    </div>
+        <!-- 验证码登录（默认隐藏） -->
+        <div id="verifyLogin" style="display: none;">
+            <div class="mb-3">
+                <label for="vcphone" class="form-label">输入手机号</label>
+                <input type="text" class="form-control" id="vcphone" name="phone" required>
+            </div>
+            <div class="mb-3">
+                <label for="vcget" class="form-label">验证码</label>
+                <div class="d-flex gap-2">
+                    <input type="text" class="form-control flex-grow-1" id="vcget" name="vcode" required>
+                    <button class="btn btn-outline-success" type="button" id="sendVcodeBtn">
+                        获取验证码
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 公共部分：记住我 + 按钮 -->
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="remember" name="remember">
+            <label class="form-check-label" for="remember">记住我</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">登录</button>
+        <button type="button" class="btn btn-secondary" onclick="togglePassword()" id="togtext">显示密码</button>
+        <button type="button" class="btn btn-secondary" id="toggleModeBtn">手机验证码登录</button>
+        <button type="button" class="btn btn-secondary" onclick="location.href='/register'">注册</button>
+    </form>
+
+    <!-- 错误提示 -->
+    <div style="color: red; margin-top: 10px;" id="error">{{ errorinfo }}</div>
+</div>
 {% endblock %}
 
 {% block myjs %}
-    <script>
-        function togglePassword() {
-
-
-            var passwordField = document.getElementById("password");
-            var demo1 = document.getElementById("togtext");
-
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                demo1.innerText = "隐藏密码"
-            } else {
-                passwordField.type = "password";
-            }
+<script>
+    // 切换密码显示
+    function togglePassword() {
+        const passwordField = document.getElementById("password");
+        const btn = document.getElementById("togtext");
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            btn.innerText = "隐藏密码";
+        } else {
+            passwordField.type = "password";
+            btn.innerText = "显示密码";
         }
-    </script>
+    }
+
+    // 切换登录方式
+    document.getElementById("toggleModeBtn").addEventListener("click", function () {
+        const pwdLogin = document.getElementById("passwordLogin");
+        const verifyLogin = document.getElementById("verifyLogin");
+        const toggleBtn = document.getElementById("toggleModeBtn");
+
+        if (verifyLogin.style.display === "none") {
+            // 切换到验证码登录
+            pwdLogin.style.display = "none";
+            verifyLogin.style.display = "block";
+            toggleBtn.innerText = "用户名密码登录";
+        } else {
+            // 切换到密码登录
+            verifyLogin.style.display = "none";
+            pwdLogin.style.display = "block";
+            toggleBtn.innerText = "手机验证码登录";
+        }
+    });
+
+    // 模拟发送验证码（实际应调用后端接口）
+    document.getElementById("sendVcodeBtn").addEventListener("click", function () {
+        const phone = document.getElementById("vcphone").value;
+        if (!phone || !/^1[3-9]\d{9}$/.test(phone)) {
+            alert("请输入正确的手机号");
+            return;
+        }
+        // 这里可以调用 AJAX 发送验证码
+        alert("验证码已发送（模拟）");
+        // 实际项目：fetch('/api/send_vcode', { method: 'POST', body: { phone } })
+    });
+</script>
 {% endblock %}

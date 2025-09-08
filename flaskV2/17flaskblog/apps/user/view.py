@@ -15,12 +15,19 @@ user_bps = Blueprint(name='user', import_name=__name__)
 import hashlib
 
 
-# 用户中心
+# # 用户中心
+# @user_bps.route('/')
+# def user_center():
+#     users = User.query.filter_by(isdelete=0).all()
+#     print(users)
+#     return render_template('user/usercenter.html', users=users)
 @user_bps.route('/')
-def user_center():
-    users = User.query.filter_by(isdelete=0).all()
-    print(users)
-    return render_template('user/usercenter.html', users=users)
+def index():
+    username = session.get('uname')
+    if username:
+        return render_template('user/index.html', username=username)
+    else:
+        return redirect('/login')
 
 
 # 删除数据
@@ -115,37 +122,102 @@ def register():
             return render_template('user/register.html', errorinfo='两次输入的密码不一致请重新输入')
     return render_template('user/register.html')
 
+#
+# # 用户登入
+# @user_bps.route('/login', methods=['GET', 'POST'])
+# def login():
+#     if request.method == 'GET':
+#         # tips:新增cookie预读取
+#         username = request.cookies.get('remember_username', '')  # 从cookie中拿数据,拿不到就默认设置为空
+#         return render_template('user/login.html', username=username)
+#     username = request.form.get('username')
+#     password_raw = request.form.get('password')
+#     # password_enc = hashlib.sha256(password_raw.encode('utf-8')).hexdigest()
+#     phone = request.form.get('phone')
+#
+#     user = User.query.filter_by(username=username, isdelete=0, phone=phone).first()
+#     if user and check_password_hash(user.password, password_raw):
+#         session['uname'] = username
+#
+#         # important:新增设置cookie,因为cookie需要设置到response对象上,所以就需要构造一个response对象
+#         resp = make_response(render_template('user/index.html', users=user))
+#         resp.set_cookie('remember_username', username, max_age=604800)
+#         # 可选：设置安全 cookie（仅 HTTPS）
+#         # resp.set_cookie('remember_username', username, max_age=604800, httponly=True, secure=True)
+#         return resp  # 其实这个resp就是 render_template('user/index.html',users=user)
+#         # return render_template('user/index.html',users=user)
+#     else:
+#         return render_template('user/login.html', errorinfo='信息错误,请重试')
+#
+#
+# # important:新增之用手机验证码登录
+# @user_bps.route('/login_verifycode', endpoint='login_verifycode')
+# def login_verifycode_route():
+#     if request.method == 'POST':
+#         phonenum = request.form.get('phonenum')
+#         if not phonenum:
+#             return jsonify(code=400, msg='手机号不能为空')
+#         elif not phonenum.isdigit() or len(phonenum) != 11:
+#             return jsonify(code=400, msg='手机格式错误')
+#
+#         user = User.query.filter_by(phone=phonenum, isdelete=0).first()
+#         if user:
+#             return jsonify(code=200, msg='该手机号已被注册')
+#         else:
+#             return jsonify(code=200, msg='该手机号未被注册请先注册')
+#     return render_template('user/loginwithvc.html')
 
-# 用户登入
+
+# view.py
+
 @user_bps.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
-        # tips:新增cookie预读取
-        username = request.cookies.get('remember_username', '')  # 从cookie中拿数据,拿不到就默认设置为空
+        # 从 cookie 获取记住的用户名
+        username = request.cookies.get('remember_username', '')
         return render_template('user/login.html', username=username)
+
+    # POST 请求：判断是哪种登录方式
     username = request.form.get('username')
-    password_raw = request.form.get('password')
-    # password_enc = hashlib.sha256(password_raw.encode('utf-8')).hexdigest()
+    password = request.form.get('password')
     phone = request.form.get('phone')
+    vcode = request.form.get('vcode')  # 验证码登录用
 
-    user = User.query.filter_by(username=username, isdelete=0, phone=phone).first()
-    if user and check_password_hash(user.password, password_raw):
-        session['uname'] = username
+    # 场景1：用户名密码登录
+    if username and password:
+        user = User.query.filter_by(username=username, isdelete=0).first()
+        if user and check_password_hash(user.password, password):
+            session['uname'] = username
+            resp = make_response(render_template('user/index.html',users=user))
+            resp.set_cookie('remember_username', username, max_age=604800)
+            return resp
+        else:
+            return render_template('user/login.html', errorinfo='用户名或密码错误')
 
-        # important:新增设置cookie,因为cookie需要设置到response对象上,所以就需要构造一个response对象
-        resp = make_response(render_template('user/index.html', users=user))
-        resp.set_cookie('remember_username', username, max_age=604800)
-        # 可选：设置安全 cookie（仅 HTTPS）
-        # resp.set_cookie('remember_username', username, max_age=604800, httponly=True, secure=True)
-        return resp  # 其实这个resp就是 render_template('user/index.html',users=user)
-        # return render_template('user/index.html',users=user)
-    else:
-        return render_template('user/login.html', errorinfo='信息错误,请重试')
+    # 场景2：手机号 + 验证码登录（这里模拟验证码正确为 "123456"，实际应对接短信服务）
+    elif phone and vcode:
+        # 可在此处验证验证码是否正确（比如从 Redis 中比对）
+        if vcode != "123456":  # 示例验证码
+            return render_template('user/login.html', errorinfo='验证码错误')
+        user = User.query.filter_by(phone=phone, isdelete=0).first()
+        if not user:
+            return render_template('user/login.html', errorinfo='该手机号未注册')
+        session['uname'] = user.username
+        resp = make_response(redirect(url_for('user.index')))
+        resp.set_cookie('remember_username', user.username, max_age=604800)
+        return resp
+
+    # 其他情况
+    return render_template('user/login.html', errorinfo='请输入完整信息')
 
 
 @user_bps.route('/logout', endpoint='logout')
 def logout_route():
     session.clear()
+    # resp = make_response(redirect('/login'))
+    # important:新增之退出后删除cookie
+    # resp.delete_cookie('remember_username')
+    # return resp
     return redirect('/login')
 
 

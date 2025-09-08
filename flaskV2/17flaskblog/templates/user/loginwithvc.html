@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}
+    用户登录
+{% endblock %}
+{% block page_content %}
+    <div style="padding-bottom: 40px ; padding:30px;padding-top:20px">
+        <h1 style="color: #556252">验证码登录</h1>
+        <form action="{{ url_for('user.login') }}" method="post">
+            <!-- 手机号输入 -->
+            <div class="mb-3">
+                <label for="exampleInputphone" class="form-label">输入手机号</label>
+                <input type="text" class="form-control" id="exampleInputphone" name="phonenum">
+            </div>
+
+            <!-- 验证码输入 + 按钮 -->
+            <div class="mb-3">
+                <label for="vcget" class="form-label">验证码</label>
+                <div class="d-flex gap-2"> <!-- 使用 Flex 布局，gap 控制间距 -->
+                    <input type="text" class="form-control flex-grow-1" id="vcget" name="vcode">
+                    <button class="btn btn-outline-success" type="button" style="white-space: nowrap; min-width: 60px;">
+                        获取验证码
+                    </button>
+                </div>
+            </div>
+
+            <!-- 记住我 -->
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                <label class="form-check-label" for="remember">记住我</label>
+            </div>
+
+            <!-- 提交按钮 -->
+            <button type="submit" class="btn btn-primary">登录</button>
+            <button type="button" class="btn btn-secondary">
+                <a href="/register" class="nav-link">注册</a>
+            </button>
+            <button type="button" class="btn btn-secondary">
+                <a href="/login" class="nav-link">用户名密码登录</a>
+            </button>
+        </form>
+
+        <!-- 错误提示 -->
+        <div style="color: red" id="002">{{ errorinfo }}</div>
+    </div>
+{% endblock %}
+
+{% block myjs %}
+    <script>
+    </script>
+{% endblock %}

@@ -2,11 +2,13 @@
 {% block title %}
     博客首页
 {% endblock %}
-
+{% block style %}
+    {{ super() }}
+{% endblock %}
 
 
 {% block page_content %}
-    <div id="container">
+    <div id="container" style="padding:30px">
         <div class="card w-75 mb-3">
             <div class="card-body">
                 <h5 class="card-title">Card title</h5>

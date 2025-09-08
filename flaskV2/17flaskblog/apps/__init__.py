@@ -20,7 +20,7 @@ def create_app(configname='default'):
     static_dir = os.path.join(basedir,'static')
 
     app = Flask(__name__, template_folder=template_dir,static_folder=static_dir)
-    app.secret_key = ';ouahsef;euahiuhiluh'
+    # app.secret_key = ';ouahsef;euahiuhiluh'
     configname = configname or os.getenv('FLASK_ENV' or 'default')
     app.config.from_object(configdict[configname])
 
@@ -35,7 +35,7 @@ def create_app(configname='default'):
         if request.path.startswith('/static/') or request.path == '/favicon.ico':
             return
         # important:设置白名单,不然用户会卡循环登录最后报错,白名单里放的是无需登录就能访问的页面
-        if request.path in ["/login", '/register','/checkphone']:
+        if request.path in ["/login",'/login_verifycode', '/register','/checkphone']:
             return
 
         print('请求前操作')

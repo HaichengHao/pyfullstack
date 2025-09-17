@@ -19,4 +19,6 @@ class Image(BaseModel):
 
 @app.post("/images/multiple/")
 async def create_multiple_images(images: list[Image]):
+    for img in images:
+        print(img.url)
     return images

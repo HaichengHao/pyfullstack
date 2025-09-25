@@ -1,25 +1,47 @@
 <html>
 <head>
     <title>Item Details</title>
-    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+    {#    <link href="{{ url_for('static', filepath='/styles.css') }}" rel="stylesheet">#}
+    <style>
+        h1 {
+            color: rebeccapurple;
+        }
+
+        table {
+            border-collapse: collapse;
+            border: 1px solid black;
+        }
+
+        th, td {
+            border: 0.5px solid black;
+        }
+    </style>
 </head>
 <body>
-    <h1><a href="{{ url_for('read_item', id=id) }}">Item ID: {{ id }}</a></h1>
-    <table>
-        <thead>
-            <tr>
-                <th>id</th>
-                <th>姓名</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-                <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ user.username }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<h1><a href="{{ url_for('read_item', id=id) }}">Item ID: {{ id }}</a></h1>
+<div>
+    {% if age>18 %}
+        <div>您已成年</div>
+        {% else %}
+        <div>小朋友</div>
+    {% endif %}
+
+</div>
+<table>
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>姓名</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ user.username | upper }}</td> <!--当然也可以使用过滤器-->
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
 </body>
 </html>

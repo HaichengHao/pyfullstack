@@ -3,6 +3,9 @@
 @Editor  : 百年
 @Date    :2025/9/18 12:13 
 """
+
+#important:pip install tortoise-orm 注意别装错了！！！！
+# 进行数据库迁移的时候用的是
 from tortoise.models import Model
 from tortoise import fields
 
@@ -29,7 +32,7 @@ class Course(Model):
     id = fields.IntField(primary_key=True)
     name = fields.CharField(max_length=32, description="课程名称")
     teacher = fields.ForeignKeyField("models.Teacher",related_name="courses")
-
+    caddr = fields.CharField(max_length=32,description="教室",default=None)
 
 class Teacher(Model):
     id = fields.IntField(primary_key=True)

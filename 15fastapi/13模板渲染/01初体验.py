@@ -22,7 +22,8 @@ POOL = PooledDB(
     host='localhost',
     port=3306,
     password='HHCzio20',
-    database='flaskblog',
+    # database='flaskblog',
+    database='flaskv2',
     cursorclass=pymysql.cursors.DictCursor
 
 )
@@ -43,6 +44,7 @@ async def read_item(request: Request, id: str):
     return templates.TemplateResponse( #step4:指定返回的模板html以及携带的jinja占位数据
         request=request,
         name="item.html", #模版文件
-        context={"id": id,"users":userinfo}, #上下文
+        context={"id": id,"users":userinfo,"age":12}, #上下文
 
     )
+

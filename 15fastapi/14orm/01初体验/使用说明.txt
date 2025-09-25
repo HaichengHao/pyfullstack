@@ -1,0 +1,85 @@
+from tortoise.contrib.fastapi import register_tortoise
+利用register_tortoise 来进行数据库的配置
+记得还要安装pip install asyncmy 不然异步数据库调不起来
+register_tortoise(
+    app=app,
+    config=TORTOISE_ORM
+    # config={
+    #     'connections': {
+    #         'default': {
+    #             'engine': 'tortoise.backends.mysql',
+    #             'credentials': {
+    #                 'host': '127.0.0.1',
+    #                 'port': '3306',
+    #                 'user': 'root',
+    #                 'password': 'HHCzio20',
+    #                 'database': 'fastapi',
+    #                 'minsize': 1,
+    #                 'maxsize': 5,
+    #                 'charset': 'utf8mb4',
+    #                 'echo': True
+    #
+    #             }
+    #         }
+    #     },
+    #     'apps': {
+    #         'models': {
+    #             'models': ['models'],
+    #             'default_connection': 'default',
+    #         }
+    #     },
+    #     'use_tz':False,
+    #     'timezone':'Asia/Shanghai'
+    # }
+
+
+
+
+
+from tortoise.models import Model
+from tortoise import fields
+这俩一个是用来配置数据库的ORM类的，一个是用来配置orm的数据字段的
+
+
+aerich是一个orm迁移工具,需要结合tortoise异步orm框架使用,安装aerich
+pip install aerich
+
+1.初始化配置,只需使用一次,注意,如果要使用此配置,需要在配置文件中register_tortoise的config的apps中的models里加上aerich.models,
+即'models': ['models','aerich.models']
+aerich init -t settings.TORTOISE_ORM #TORTOISE_ORM配置的位置
+初始化完成会在当前目录生成一个文件夹: migrations其实和flask的migrate差不多
+pyproject.toml:保存配置文件路径,但低版本可能是aerich.ini
+migrations:存放迁移文件
+
+(converse_pyspider) E:\pyfullstack\15fastapi\14orm\01初体验>aerich init -t settings.TORTOISE_ORM
+Success writing aerich config to pyproject.toml
+Success creating migrations folder ./migrations
+
+成功，
+
+
+2.
+但是！！！接下来我们还要有类似于跟flask的sqlalchemy的flask db init一样的效果
+aerich init-db
+(converse_pyspider) E:\pyfullstack\15fastapi\14orm\01初体验>aerich init-db
+Table 'student_course' already exists   <--提示这个是因为在制定了register_tortoise中指定了 generate_schemas=True，两者择其一即可，要么用init-db命令，要么配置为True
+Success creating app migration folder migrations\models
+Success generating initial migration file for app "models"
+
+
+3.
+如果你给某个orm的class新加上了一列(即对数据表结构进行了修改),那就需要在正确修改后
+aerich migrate [--name] (标记修改操作,可选操作)
+aerich migrate --name add_column
+类比于flask db migrate
+(converse_pyspider) E:\pyfullstack\15fastapi\14orm\01初体验>aerich migrate --name add_column
+Success creating migration file 1_20250918155812_add_column.py
+
+4.
+这之后还要进行upgrade操作
+aerich upgrade ,如果要降级那就aerich downgrade
+
+(converse_pyspider) E:\pyfullstack\15fastapi\14orm\01初体验>aerich upgrade
+Success upgrading to 1_20250918155812_add_column.py
+
+对比来看,也就是比flask的多了第一步的初始化配置

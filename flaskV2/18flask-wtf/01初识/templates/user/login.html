@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录页面</title>
+</head>
+<body>
+<div>欢迎登录</div>
+<form action="{{ url_for('user.user') }}" method="post" enctype="multipart/form-data">
+    {{ uform.csrf_token }} <!--让表单产生token值-->
+    <p>{{ uform.name.label }}:{{ uform.name }}<span>{% if uform.name.errors %}{{ uform.name.errors.0 }}{% endif %}</span></p><!--因为.errors返回的是一个列表对象,我们要显示美观的话用取列表值就可以-->
+    <p>{{ uform.pwd.label }}:{{ uform.pwd }}<span style="color: red">{% if uform.pwd.errors %}{{ uform.pwd.errors}}{% endif %}</span></p>
+    <p>{{ uform.confirm_pwd.label }}:{{ uform.confirm_pwd }}<span style="color: red">{% if uform.confirm_pwd.errors %}{{ uform.confirm_pwd.errors.0}}{% endif %}</span></p>
+    <p>{{ uform.phone_num.label }}:{{ uform.phone_num }}<span>{% if uform.phone_num.errors %}{{ uform.phone_num.errors.0 }}{% endif %}</span></p>
+    <p>{{ uform.icon.label }}:{{ uform.icon}}<span>{% if uform.icon.errors %}{{ uform.icon.errors.0 }}{% endif %}</span></p>
+    <input type="submit">
+</form>
+</body>
+</html>

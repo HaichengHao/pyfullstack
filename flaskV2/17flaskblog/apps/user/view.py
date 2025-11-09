@@ -5,7 +5,6 @@
 """
 from sqlalchemy import and_, or_
 from werkzeug.security import generate_password_hash, check_password_hash
-
 from .models import User
 from exts.extensions import db
 from flask import Blueprint, request, render_template, redirect, url_for, session, jsonify, make_response

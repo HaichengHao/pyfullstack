@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <style>
+        .info_login {
+            display: block;
+            color: rebeccapurple;
+            {#float: left;#}
+
+        }
+    </style>
+</head>
+<body>
+<div>
+    <form action="{{ url_for('user.login') }}" enctype="multipart/form-data" method="post">
+        {{ login_form.csrf_token }}
+        <p>
+            <sapn class="info_login">{{ login_form.name.label }}:</sapn>
+            {{ login_form.name }}</p>
+        <p><span
+                class="info_login">{{ login_form.pwd.label }}:</span>{{ login_form.pwd }}<span>{% if login_form.pwd.errors %}{{ login_form.pwd.errors.0 }}{% endif %}</span>
+        </p>
+        <p><span class="info_login">
+            {{ login_form.repwd.label }}:
+            <span>
+                {{ login_form.repwd }}
+                {% if login_form.repwd.errors %}
+                {{ login_form.repwd.errors }}
+                {% endif %}
+            </span>
+        </span></p>
+        <p><span class="info_login">
+            {{ login_form.icon.label }}:
+            <span>
+                {{ login_form.icon }}
+                {% if login_form.icon.errors %}
+                    {{ login_form.icon.errors.0 }}
+                {% endif %}
+            </span>
+        </span></p>
+        <p>
+            {{ login_form.phone_num.label }}:{{ login_form.phone_num }}
+        </p>
+        <p>{{ login_form.recaptcha.label }}:{{ login_form.recaptcha }}</p>
+        <button onclick="document.getElementById('lgin').click()">登录</button>
+        <input id="lgin" type="submit" hidden="hidden">
+    </form>
+</div>
+
+</body>
+</html>

@@ -20,7 +20,7 @@ def login():
         name = uform.name.data
         pwd = uform.pwd.data
         phone = uform.phone_num.data
-        icon = uform.icon.data
+        icon = uform.icon.data #tips:对于form数据的获得几乎总是通过form对象.属性(表单项).data来拿到数据
         print(icon)
         # < FileStorage: 'OIP-C.jpg'('image/jpeg') >
         print(icon.filename)  #就像之前的filestorge类型一样,又.filename方法可以让我们直接拿到图片名称

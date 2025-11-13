@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <style>
+        .info_login {
+            display: block;
+            color: rebeccapurple;
+        {#float: left;#}
+
+        }
+    </style>
+</head>
+<script src="https://www.tenpay.com/v4/static/js/jquery-1.9.1.min.js">
+
+</script>
+<body>
+<div>
+    <form action="{{ url_for('user.login') }}" enctype="multipart/form-data" method="post" id="lgin">
+        {{ login_form.csrf_token }}
+        <p>
+            <sapn class="info_login">{{ login_form.name.label }}:</sapn>
+            {{ login_form.name }}</p>
+        <p><span
+                class="info_login">{{ login_form.pwd.label }}:</span>{{ login_form.pwd }}<span>{% if login_form.pwd.errors %}
+            {{ login_form.pwd.errors.0 }}{% endif %}</span>
+        </p>
+        <p><span class="info_login">
+            {{ login_form.repwd.label }}:
+            <span>
+                {{ login_form.repwd }}
+                {% if login_form.repwd.errors %}
+                    {{ login_form.repwd.errors }}
+                {% endif %}
+            </span>
+        </span></p>
+        <p><span class="info_login">
+            {{ login_form.icon.label }}:
+            <span>
+                {{ login_form.icon }}
+                {% if login_form.icon.errors %}
+                    {{ login_form.icon.errors.0 }}
+                {% endif %}
+            </span>
+        </span></p>
+        <p>
+            {{ login_form.phone_num.label }}:
+            <span>
+                {{ login_form.phone_num }}
+                {% if login_form.phone_num.errors %}
+                    {{ login_form.phone_num.errors.0 }}
+                {% endif %}
+            </span>
+        </p>
+        <p>
+            {{ login_form.captcha.label }}:
+            <span>
+                {{ login_form.captcha }}
+                {% if login_form.captcha.errors %}
+                    {{ login_form.captcha.errors.0 }}
+                {% endif %}
+            </span>
+            <img src="{{ url_for('user.captcha') }}" alt="炒鸡验证码" title="看不清？点击刷新验证码" id="cap">
+        </p>
+
+
+        <button onclick="document.getElementById('lgin').click()">登录</button>
+        {#        <button   onclick="document.getElementById('lgin').onsubmit()">登录</button>#}
+        <input id="lgin" type="submit" hidden="hidden">
+    </form>
+</div>
+<script>
+    $(document).ready(
+        function () {
+            $('#cap').click(
+                function () {
+                    console.log('---------')
+                    $(this).attr('src', "{{ url_for('user.captcha') }}?ran=" + Math.random()); /*这样写是因为服务机制，如果请求路由不变就不发生变化*/
+                }
+            );
+        }
+    )
+</script>
+</body>
+</html>

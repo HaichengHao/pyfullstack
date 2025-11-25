@@ -4,7 +4,7 @@
 @Date    :2025/11/14 12:07 
 """
 from django.http import HttpResponse
-from flask import Blueprint, request, render_template, flash,redirect,url_for
+from flask import Blueprint, request, render_template, flash,redirect,url_for,current_app
 
 user_bp = Blueprint('user', __name__, url_prefix='/user')
 
@@ -25,4 +25,8 @@ def login_rt():
             flash('验证成功!!',category='warning')  # tips:相当于也是对页面传出一个消息,只不过是不通过render_template了
             # return render_template('user/index.html')
             return redirect(url_for('user.index'))
+        else:
+            current_app.logger.debug('出错咯！！')
+            current_app.logger.warning('这是一个警告')
+            current_app.logger.error('这是一个错误')
     return render_template('user/login.html')

@@ -12,7 +12,7 @@ from django.contrib.admin import action
 
 from ..exts.dbhelper import db
 from flask import Blueprint, url_for
-from flask_restful import Resource, Api, marshal_with, marshal, fields, reqparse, inputs
+from flask_restful import Resource, Api, marshal_with,fields, reqparse, inputs
 from .models import User
 
 user_bp = Blueprint('user', __name__)
@@ -35,6 +35,7 @@ parser.add_argument('username', type=str, help='用户名不能为空', location
 parser.add_argument('password', required=True, help='密码不能为空', location=['form'])
 parser.add_argument('hobbies', action='append', location=['form'], dest='hobby')
 parser.add_argument('usericon', type=FileStorage, location=['files'], dest='usericon')
+#important:dest是给前端人员看的,就相当于我们在form中制定好了name,前端得按着我们的来
 
 
 def phone_validator(phone):
